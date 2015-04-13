@@ -1,0 +1,27 @@
+{
+  "name": "crop-n-resize",
+  "version": "0.0.1",
+  "description": "Crop and resize images seamlessly ",
+  "main": "crop-n-resize.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/linkry/crop-n-resize.git"
+  },
+  "keywords": [
+    "crop",
+    "resize",
+    "image",
+    "upload",
+    "html5",
+    "javascript"
+  ],
+  "author": "Youness MABROUK",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/linkry/crop-n-resize/issues"
+  },
+  "homepage": "https://github.com/linkry/crop-n-resize"
+}
