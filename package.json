@@ -2,9 +2,8 @@
   "name": "crop-n-resize",
   "version": "0.0.1",
   "description": "Crop and resize images seamlessly ",
-  "main": "crop-n-resize.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "beefy ./demo/index.html --live"
   },
   "repository": {
     "type": "git",
@@ -23,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/linkry/crop-n-resize/issues"
   },
-  "homepage": "https://github.com/linkry/crop-n-resize"
+  "homepage": "https://github.com/linkry/crop-n-resize",
+  "devDependencies": {
+    "beefy": "^2.1.5"
+  }
 }
