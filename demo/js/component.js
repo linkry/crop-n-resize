@@ -1,20 +1,18 @@
 
-var resizeableImage = function(image_target) {
+var resizeableImage = function(options) {
   // Some variable and settings
     var $container,
-      $overlay,
-      img = {},
-      orig_src = new Image(),
-      image_target = $(image_target).get(0),// nojquery
-      event_state = {},
-      constrain = false,
-      min_width = 200, // Change as required
-      min_height = 200,
-      max_width = 800, // Change as required
-      max_height = 900,
-      resize_canvas = document.createElement('canvas');
-
-
+        $overlay = document.querySelector(".component"),
+        img = {},
+        orig_src = new Image(),
+        image_target = document.querySelector(options.target),
+        event_state = {},
+        constrain = false,
+        min_width = options.width, // Change as required
+        min_height = options.height,
+        resize_canvas = document.createElement('canvas');
+        $overlay.style.width = options.width+"px";
+        $overlay.style.height = options.height+"px";
     init = function(){
 
         // When resizing, we will always use this copy of the original as the base
@@ -35,19 +33,14 @@ var resizeableImage = function(image_target) {
         $('.js-crop').on('click', crop);// nojquery
         $overlay = $("#overlay");
         img.zoom = 0;
-        border = 3 ;
         img.width = $("#overlay img").width();
         img.height = $("#overlay img").height();
         img.boundaries = {};
         img.boundaries.max = $overlay.offset();
-        img.boundaries.max.left += border;
-        img.boundaries.max.top += border;
         img.boundaries.min = {
-            left : Math.round($overlay.offset().left - (img.width - $overlay.width()) +border), 
-            top : Math.round($overlay.offset().top - (img.height - $overlay.height()) +border)
+            left : Math.round($overlay.offset().left - (img.width - $overlay.width())), 
+            top : Math.round($overlay.offset().top - (img.height - $overlay.height()))
         };
-        img.boundaries.min.left += border;
-        img.boundaries.min.top += border;
         resizeInitImage(min_width,min_height, img.width, img.height);
         document.getElementById("zoom").value = 0;
         img.ratio = 0;
@@ -105,8 +98,8 @@ var resizeableImage = function(image_target) {
 
         
         img.boundaries.min = {
-            left : Math.round($overlay.offset().left - (img.width - $overlay.width()) + border), 
-            top : Math.round($overlay.offset().top - (img.height - $overlay.height()) + border)
+            left : Math.round($overlay.offset().left - (img.width - $overlay.width())), 
+            top : Math.round($overlay.offset().top - (img.height - $overlay.height()))
         };
 
 
@@ -154,8 +147,8 @@ var resizeableImage = function(image_target) {
         img.originalWidth = img.width; 
 
         img.boundaries.min = {
-            left : Math.round($overlay.offset().left - (img.width - $overlay.width()) + border), 
-            top : Math.round($overlay.offset().top - (img.height - $overlay.height()) + border)
+            left : Math.round($overlay.offset().left - (img.width - $overlay.width())), 
+            top : Math.round($overlay.offset().top - (img.height - $overlay.height()))
         };
 
         $container.offset({
@@ -234,8 +227,8 @@ var resizeableImage = function(image_target) {
     crop = function(){
         //Find the part of the image that is inside the crop box
         var crop_canvas,
-            left = $overlay.offset().left - $container.offset().left +border,// nojquery
-            top =  $overlay.offset().top - $container.offset().top +border,// nojquery
+            left = $overlay.offset().left - $container.offset().left,// nojquery
+            top =  $overlay.offset().top - $container.offset().top,// nojquery
             width = $overlay.width(),// nojquery
             height = $overlay.height();// nojquery
         	
@@ -256,4 +249,8 @@ var resizeableImage = function(image_target) {
 };
 
 // Kick everything off with the target image
-resizeableImage($('.resize-image'));// nojquery
+resizeableImage({
+    target : '.resize-image',
+    width : 250,
+    height : 200,
+});// nojquery
