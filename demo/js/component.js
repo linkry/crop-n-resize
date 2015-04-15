@@ -84,21 +84,32 @@ var resizeableImage = function(image_target) {
         resize_canvas.height = img.height;
 
         offset = $container.offset();
-        console.log(oldRatio, newRatio);
 
-        var xleft, xtop, oldWidth, oldHeight;
+        var xleft, xtop, oldWidth, oldHeight, newWidth;
+        newWidth = img.width;
+        newHeight = img.height;
+        oldWidth = newWidth - img.originalWidth*(Math.abs(newRatio - oldRatio));
+        oldHeight = newHeight - img.originalHeight*(Math.abs(newRatio - oldRatio));
+        console.log("oldWidth", oldWidth, "newWidth", newWidth);
+
         if(oldRatio > newRatio) { //zooming out
-            console.log("zooming out");
-            oldWidth = Math.floor(img.originalWidth*(1+newRatio));
-            oldHeight = Math.floor(img.originalHeight*(1+newRatio));
-            xleft = Math.floor(offset.left +((img.width - oldWidth))); 
-            xtop = Math.floor(offset.top +((img.height - oldHeight))); 
+            console.info("zooming out");
+            //oldWidth = Math.floor(img.width*(1-oldRatio));
+            //oldHeight = Math.floor(img.width*(1-oldRatio));
+            //console.log(img.originalWidth,img.originalHeight,newRatio, oldRatio);
+            xleft = Math.floor(offset.left +(Math.abs(newWidth - oldWidth)/2)); 
+            xtop = Math.floor(offset.top +(Math.abs(newHeight - oldHeight)/2)); 
         } else {//zooming in
-            console.log("zooming in")
-            oldWidth = Math.floor(img.originalWidth*(1+newRatio));
-            oldHeight = Math.floor(img.originalHeight*(1+newRatio));
-            xleft = Math.floor(offset.left -((img.width - oldWidth))); 
-            xtop = Math.floor(offset.top -((img.height - oldHeight))); 
+            console.info("zooming in");
+
+            xleft = Math.floor(offset.left -(Math.abs(newWidth - oldWidth)/2)); 
+            xtop = Math.floor(offset.top -(Math.abs(newHeight - oldHeight)/2)); 
+            //oldWidth = Math.floor(img.width*(1-oldRatio));
+            //oldHeight = Math.floor(img.width*(1-oldRatio));
+            //console.log(img.originalWidth,img.width,newRatio, oldRatio);
+           // console.log("oldWidth", oldWidth, "newWidth", newWidth);
+           // xleft = Math.floor(offset.left -((img.originalWidth * newRatio)/2)); 
+           // xtop = Math.floor(offset.top -((img.originalHeight * newRatio)/2)); 
         }
         /*var x = Math.abs(offset.left) + $overlay.width() / 2;
         var y = Math.abs(offset.top) + $overlay.height() / 2;
@@ -112,7 +123,7 @@ var resizeableImage = function(image_target) {
       //  var oldWidth = width*(1 - img.ratio);
        // var oldHeight = height*(1 - img.ratio); 
 
-        console.log(img.originalHeight,img.originalWidth,oldWidth, oldHeight,xtop,xleft, oldRatio,newRatio);
+       // console.info(img.originalHeight,img.originalWidth,oldWidth, oldHeight,xtop,xleft, oldRatio,newRatio);
 
         /*if(left > img.boundaries.max.left) {
             left = img.boundaries.max.left;
