@@ -234,18 +234,21 @@ var resizeableImage = function(image_target) {
     crop = function(){
         //Find the part of the image that is inside the crop box
         var crop_canvas,
-            left = $('.overlay').offset().left - $container.offset().left,// nojquery
-            top =  $('.overlay').offset().top - $container.offset().top,// nojquery
-            width = $('.overlay').width(),// nojquery
-            height = $('.overlay').height();// nojquery
+            left = $overlay.offset().left - $container.offset().left +border,// nojquery
+            top =  $overlay.offset().top - $container.offset().top +border,// nojquery
+            width = $overlay.width(),// nojquery
+            height = $overlay.height();// nojquery
         	
         crop_canvas = document.createElement('canvas');
         crop_canvas.width = width;
         crop_canvas.height = height;
+        console.log(width,height,left,top)
 
         crop_canvas.getContext('2d').drawImage(image_target, left, top, width, height, 0, 0, width, height);
         window.open(crop_canvas.toDataURL("image/png"));
     }
+
+
 
     init();
 
