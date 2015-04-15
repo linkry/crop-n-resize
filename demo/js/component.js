@@ -94,65 +94,45 @@ var resizeableImage = function(image_target) {
 
         if(oldRatio > newRatio) { //zooming out
             console.info("zooming out");
-            //oldWidth = Math.floor(img.width*(1-oldRatio));
-            //oldHeight = Math.floor(img.width*(1-oldRatio));
-            //console.log(img.originalWidth,img.originalHeight,newRatio, oldRatio);
             xleft = Math.floor(offset.left +(Math.abs(newWidth - oldWidth)/2)); 
             xtop = Math.floor(offset.top +(Math.abs(newHeight - oldHeight)/2)); 
         } else {//zooming in
             console.info("zooming in");
-
             xleft = Math.floor(offset.left -(Math.abs(newWidth - oldWidth)/2)); 
             xtop = Math.floor(offset.top -(Math.abs(newHeight - oldHeight)/2)); 
-            //oldWidth = Math.floor(img.width*(1-oldRatio));
-            //oldHeight = Math.floor(img.width*(1-oldRatio));
-            //console.log(img.originalWidth,img.width,newRatio, oldRatio);
-           // console.log("oldWidth", oldWidth, "newWidth", newWidth);
-           // xleft = Math.floor(offset.left -((img.originalWidth * newRatio)/2)); 
-           // xtop = Math.floor(offset.top -((img.originalHeight * newRatio)/2)); 
+      
         }
-        /*var x = Math.abs(offset.left) + $overlay.width() / 2;
-        var y = Math.abs(offset.top) + $overlay.height() / 2;
 
-        var newX = x * img.ratio;
-        var newY = y * img.ratio;
-            
-        left = offset.left - (newX - x);
-        top = offset.top - (newY - y);*/
-            
-      //  var oldWidth = width*(1 - img.ratio);
-       // var oldHeight = height*(1 - img.ratio); 
+        
+        img.boundaries.min = {
+            left : $overlay.offset().left - (img.width - $overlay.width()) + border, 
+            top : $overlay.offset().top - (img.height - $overlay.height()) + border
+        };
 
-       // console.info(img.originalHeight,img.originalWidth,oldWidth, oldHeight,xtop,xleft, oldRatio,newRatio);
 
-        /*if(left > img.boundaries.max.left) {
-            left = img.boundaries.max.left;
+        if(xleft > img.boundaries.max.left) {
+            xleft = img.boundaries.max.left;
         }
 
         //top
-        if(top > img.boundaries.max.top) {
-            top = img.boundaries.max.top;
+        if(xtop > img.boundaries.max.top) {
+            xtop = img.boundaries.max.top;
         }
 
         // right
-        if(left < img.boundaries.min.left) {
-            left = img.boundaries.min.left;
+        if(xleft < img.boundaries.min.left) {
+            xleft = img.boundaries.min.left;
         }
 
         //bottom
-        if(top < img.boundaries.min.top) {
-            top = img.boundaries.min.top;
-        }*/
+        if(xtop < img.boundaries.min.top) {
+            xtop = img.boundaries.min.top;
+        }
 
         $container.offset({
             top : xtop,
             left : xleft
         }); 
-
-        img.boundaries.min = {
-            left : $overlay.offset().left - (img.width - $overlay.width()) + border, 
-            top : $overlay.offset().top - (img.height - $overlay.height()) + border
-        };
 
         resize_canvas.getContext('2d').drawImage(orig_src, 0, 0, img.width, img.height);   
         $(image_target).attr('src', resize_canvas.toDataURL("image/png")); // nojquery 
