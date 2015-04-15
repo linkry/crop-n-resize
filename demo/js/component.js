@@ -13,43 +13,17 @@ var resizeableImage = function(options) {
         resize_canvas = document.createElement('canvas');
     $overlay.style.width = options.width+"px";
     $overlay.style.height = options.height+"px";
-
-    init = function(imgURI){
-
-        image_target = document.createElement("img");
-        image_target.onload = function() {
-            img.originalWidth = this.width;
-            img.originalHeight = this.height;
-            console.log("image dimensions",this.width, this.height);
-            resizeInitImage(min_width,min_height, this.width, this.height);
-        };
-        image_target.setAttribute("src",imgURI);
-
-        image_target.setAttribute("class","resize-image");
+    var imageValid = false;
+    init = function(){
 
         $container = document.createElement("div");
         $container.setAttribute("class","resize-container");
 
         $overlay.appendChild($container);
         $container.appendChild(image_target);
-        //give it data uri from filereader
-
-        //
-
-
 
         // When resizing, we will always use this copy of the original as the base
         orig_src.src=image_target.src;
-
-        // Wrap the image with the container and add resize handles
-        //$(image_target).wrap('<div class="resize-container"></div>')// nojquery
-        /*.before('<span class="resize-handle resize-handle-nw"></span>')
-        .before('<span class="resize-handle resize-handle-ne"></span>')
-        .after('<span class="resize-handle resize-handle-se"></span>')
-        .after('<span class="resize-handle resize-handle-sw"></span>');*/
-
-        // Assign the container to a variable
-        //$container =  $(image_target).parent('.resize-container');// nojquery
 
         // Add events
         $($container).on('mousedown touchstart', 'img', startMoving);// nojquery
@@ -66,7 +40,7 @@ var resizeableImage = function(options) {
         document.getElementById("zoom").value = 0;
         img.ratio = 0;
         document.getElementById("zoom").addEventListener("change",zoom);
-        
+        resizeInitImage(min_width,min_height, img.width, img.height);
     };
 
     saveEventState = function(e) {
@@ -154,6 +128,7 @@ var resizeableImage = function(options) {
 
     resizeInitImage = function(width, height, oldWidth, oldHeight){
         console.log(width, height, oldWidth, oldHeight);
+ 
         if(oldWidth < oldHeight) {
             ratio = oldWidth/width;
             resize_canvas.width = width;
@@ -168,6 +143,9 @@ var resizeableImage = function(options) {
             img.width =  oldWidth/ratio;
         }
 
+        img.originalWidth = img.width;
+        img.originalHeight = img.height;
+
         img.boundaries.min = {
             left : Math.round($($overlay).offset().left - (img.width - $($overlay).width())), 
             top : Math.round($($overlay).offset().top - (img.height - $($overlay).height()))
@@ -177,7 +155,6 @@ var resizeableImage = function(options) {
             top : (img.boundaries.min.top + img.boundaries.max.top)/2,
             left : (img.boundaries.min.left + img.boundaries.max.left)/2
         });  
-        console.log(orig_src,img.width, img.height);
         image_target.onload = null;
         resize_canvas.getContext('2d').drawImage(orig_src, 0, 0, img.width, img.height);   
         $(image_target).attr('src', resize_canvas.toDataURL("image/png")); // nojquery 
@@ -290,7 +267,21 @@ var resizeableImage = function(options) {
         };
 
         reader.onload = function (evt) {
-            init(evt.target.result)
+            image_target = document.createElement("img");
+            image_target.onload = function() {
+                
+                if(this.width < min_width || this.height < min_height) {
+                    //image too small
+                    console.error("image too small");
+                    image_target = null;
+                    return;
+                }
+
+                init();
+            };
+            image_target.setAttribute("src",evt.target.result);
+
+            image_target.setAttribute("class","resize-image"); 
         };
         reader.readAsDataURL(file);
     };
