@@ -3,8 +3,8 @@
     display: inline-block;
     cursor: move;
     margin: 0 auto;
-    left: 0;
-	top: 0;
+    left: 0px;
+	top: 0px;
 }
 
 .resize-container img {
@@ -62,7 +62,7 @@
 	width: 200px;
 	height: 200px;
     border: solid 2px rgba(222,60,80,.9);
-	box-sizing: content-box;
+	box-sizing: border-box;
 	pointer-events: none;
 	overflow: hidden;
 }
