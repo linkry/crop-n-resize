@@ -43,8 +43,8 @@ var resizeableImage = function(image_target) {
         img.boundaries.max.left += border;
         img.boundaries.max.top += border;
         img.boundaries.min = {
-            left : $overlay.offset().left - (img.width - $overlay.width()), 
-            top : $overlay.offset().top - (img.height - $overlay.height())
+            left : Math.round($overlay.offset().left - (img.width - $overlay.width()) +border), 
+            top : Math.round($overlay.offset().top - (img.height - $overlay.height()) +border)
         };
         img.boundaries.min.left += border;
         img.boundaries.min.top += border;
@@ -105,8 +105,8 @@ var resizeableImage = function(image_target) {
 
         
         img.boundaries.min = {
-            left : $overlay.offset().left - (img.width - $overlay.width()) + border, 
-            top : $overlay.offset().top - (img.height - $overlay.height()) + border
+            left : Math.round($overlay.offset().left - (img.width - $overlay.width()) + border), 
+            top : Math.round($overlay.offset().top - (img.height - $overlay.height()) + border)
         };
 
 
@@ -154,8 +154,8 @@ var resizeableImage = function(image_target) {
         img.originalWidth = img.width; 
 
         img.boundaries.min = {
-            left : $overlay.offset().left - (img.width - $overlay.width()) + border, 
-            top : $overlay.offset().top - (img.height - $overlay.height()) + border
+            left : Math.round($overlay.offset().left - (img.width - $overlay.width()) + border), 
+            top : Math.round($overlay.offset().top - (img.height - $overlay.height()) + border)
         };
 
         $container.offset({
