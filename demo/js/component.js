@@ -48,7 +48,7 @@ var resizeableImage = function(image_target) {
         };
         img.boundaries.min.left += border;
         img.boundaries.min.top += border;
-        resizeImage(min_width,min_height, img.width, img.height);
+        resizeInitImage(min_width,min_height, img.width, img.height);
         document.getElementById("zoom").value = 0;
         img.ratio = 0;
         document.getElementById("zoom").addEventListener("change",zoom);
@@ -77,32 +77,100 @@ var resizeableImage = function(image_target) {
         event_state.evnt = e;
     };
 
-    resizeImage = function(width, height, oldWidth, oldHeight){
-        if(typeof oldWidth == "undefined") {
-            resize_canvas.width = width;
-            resize_canvas.height = height;
-            img.width = width;
-            img.height = height;
-        } else {
+    resizeImage = function(oldRatio, newRatio){
+        oldRatio = parseFloat(oldRatio);
+        newRatio = parseFloat(newRatio);
+        resize_canvas.width = img.width;
+        resize_canvas.height = img.height;
 
-            if(oldWidth < oldHeight) {
+        offset = $container.offset();
+        console.log(oldRatio, newRatio);
 
-            } else {
-                ratio = oldHeight/height;
-                resize_canvas.width = oldWidth/ratio;
-                resize_canvas.height = height;
-                img.height = height;
-                img.width =  oldWidth/ratio;
-            }
-
-            img.originalHeight = img.height;
-            img.originalWidth = img.width;   
+        var xleft, xtop, oldWidth, oldHeight;
+        if(oldRatio > newRatio) { //zooming out
+            console.log("zooming out");
+            oldWidth = Math.floor(img.originalWidth*(1+newRatio));
+            oldHeight = Math.floor(img.originalHeight*(1+newRatio));
+            xleft = Math.floor(offset.left +((img.width - oldWidth))); 
+            xtop = Math.floor(offset.top +((img.height - oldHeight))); 
+        } else {//zooming in
+            console.log("zooming in")
+            oldWidth = Math.floor(img.originalWidth*(1+newRatio));
+            oldHeight = Math.floor(img.originalHeight*(1+newRatio));
+            xleft = Math.floor(offset.left -((img.width - oldWidth))); 
+            xtop = Math.floor(offset.top -((img.height - oldHeight))); 
         }
+        /*var x = Math.abs(offset.left) + $overlay.width() / 2;
+        var y = Math.abs(offset.top) + $overlay.height() / 2;
+
+        var newX = x * img.ratio;
+        var newY = y * img.ratio;
+            
+        left = offset.left - (newX - x);
+        top = offset.top - (newY - y);*/
+            
+      //  var oldWidth = width*(1 - img.ratio);
+       // var oldHeight = height*(1 - img.ratio); 
+
+        console.log(img.originalHeight,img.originalWidth,oldWidth, oldHeight,xtop,xleft, oldRatio,newRatio);
+
+        /*if(left > img.boundaries.max.left) {
+            left = img.boundaries.max.left;
+        }
+
+        //top
+        if(top > img.boundaries.max.top) {
+            top = img.boundaries.max.top;
+        }
+
+        // right
+        if(left < img.boundaries.min.left) {
+            left = img.boundaries.min.left;
+        }
+
+        //bottom
+        if(top < img.boundaries.min.top) {
+            top = img.boundaries.min.top;
+        }*/
+
+        $container.offset({
+            top : xtop,
+            left : xleft
+        }); 
 
         img.boundaries.min = {
             left : $overlay.offset().left - (img.width - $overlay.width()) + border, 
             top : $overlay.offset().top - (img.height - $overlay.height()) + border
         };
+
+        resize_canvas.getContext('2d').drawImage(orig_src, 0, 0, img.width, img.height);   
+        $(image_target).attr('src', resize_canvas.toDataURL("image/png")); // nojquery 
+    };
+
+    resizeInitImage = function(width, height, oldWidth, oldHeight){
+
+        if(oldWidth < oldHeight) {
+            //todo
+        } else {
+            ratio = oldHeight/height;
+            resize_canvas.width = oldWidth/ratio;
+            resize_canvas.height = height;
+            img.height = height;
+            img.width =  oldWidth/ratio;
+        }
+
+        img.originalHeight = img.height;
+        img.originalWidth = img.width; 
+
+        img.boundaries.min = {
+            left : $overlay.offset().left - (img.width - $overlay.width()) + border, 
+            top : $overlay.offset().top - (img.height - $overlay.height()) + border
+        };
+
+        $container.offset({
+            top : (img.boundaries.min.top + img.boundaries.max.top)/2,
+            left : (img.boundaries.min.left + img.boundaries.max.left)/2
+        });  
 
         resize_canvas.getContext('2d').drawImage(orig_src, 0, 0, img.width, img.height);   
         $(image_target).attr('src', resize_canvas.toDataURL("image/png")); // nojquery 
@@ -139,22 +207,22 @@ var resizeableImage = function(image_target) {
 
         //left
         if(offset.left  > img.boundaries.max.left) {
-            offset.left = $container.offset().left;
+            offset.left = img.boundaries.max.left;
         }
 
         //top
         if(offset.top > img.boundaries.max.top) {
-            offset.top = $container.offset().top;
+            offset.top = img.boundaries.max.top;
         }
 
         // right
         if(offset.left < img.boundaries.min.left) {
-            offset.left = $container.offset().left;
+            offset.left = img.boundaries.min.left;
         }
 
         //bottom
         if(offset.top < img.boundaries.min.top) {
-            offset.top = $container.offset().top;
+            offset.top = img.boundaries.min.top;
         }
 
         $container.offset({
@@ -163,36 +231,13 @@ var resizeableImage = function(image_target) {
         });        
     };
 
-    adaptOffset = function(oldRatio, newRatio) {
-        console.log(oldRatio, newRatio);
-        //center,
-        offset = $container.offset();
-        if(oldRatio > newRatio) { //zooming out
-            console.log("zooming out", offset.top + (offset.top*oldRatio),offset.left + (offset.left*oldRatio))
-            $container.offset({
-                top : offset.top + (offset.top*oldRatio),  
-                left : offset.left + (offset.left*oldRatio)
-            });
-
-        } else {//zooming in
-            return;
-            $container.offset({
-                top : offset.top + (offset.top*oldRatio),  
-                left : offset.left + (offset.left*oldRatio)
-            });
-
-        }
-    }
-
     zoom = function() {
         var z = document.getElementById("zoom").value;
-        ratio = z
-        width = img.originalWidth + (img.originalWidth * ratio);
-        height = img.originalHeight + (img.originalHeight * ratio);
-        console.log(width,height,ratio);
-        resizeImage(width, height);
-        adaptOffset(img.ratio, ratio);
-        img.ratio = ratio;
+        ratio = z;
+        img.width = img.originalWidth + (img.originalWidth * ratio);
+        img.height = img.originalHeight + (img.originalHeight * ratio);
+        resizeImage(img.ratio,ratio);
+        img.ratio = ratio;        
     };
 
     crop = function(){
